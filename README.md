@@ -1,2 +1,1 @@
-# 🖱️padlypad📱
-WI-FI remote mouse.
+# padly
