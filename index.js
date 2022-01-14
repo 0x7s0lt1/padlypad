@@ -33,7 +33,7 @@ var fr_lastPos = {x : screenSize.width / 2,y : screenSize.height / 2};
 UPserver.on('connection',(socket)=>{
 
 
-    console.log(chalk.bgGray(' Connection: ',socket.request.connection.remoteAddress + " "));
+    console.log(time()+chalk.bgGreen(' Connected: ',socket.request.connection.remoteAddress + " "));
 
     socket.emit('initScreen',screenSize);
     
@@ -45,7 +45,13 @@ UPserver.on('connection',(socket)=>{
     });
     socket.on('scroll',(scroll)=>{
         console.log(scroll);
-        robot.scrollMouse(scroll.x,scroll.y);
+        //robot.scrollMouse(scroll.x,scroll.y);
+
+        if(scroll == 'up'){
+            robot.keyTap('pageup');
+        }else{
+            robot.keyTap('pagedown');
+        }
     })
     socket.on('click',(mouse)=>{
         robot.mouseClick();
@@ -59,13 +65,21 @@ UPserver.on('connection',(socket)=>{
     socket.on('tapKey',(key)=>{
         robot.keyTap(key);
     });
-
-    socket.on('error',(err)=>{
-        console.log(chalk.red(err));
+    socket.on('tapKeyCombo',(data) =>{
+        robot.keyTap(data.key,data.array);
     })
+    socket.on('error',(err)=>{
+        console.log(time()+chalk.red(err));
+    })   
+
+
+
+
+
+
 
     socket.on('disconnect',()=>{
-        console.log(chalk.bgYellow(chalk.black('Disconnection: ',socket.request.connection.remoteAddress)));
+        console.log(time()+chalk.bgYellow(chalk.black('Disconnection: ',socket.request.connection.remoteAddress)));
     })
 
 
@@ -75,14 +89,14 @@ UPserver.on('connection',(socket)=>{
 function getFreedomPos(obj){
     
     if(obj.x == "+" ){
-        fr_lastPos.x += 5;
+        fr_lastPos.x += 10;
     }else if(obj.x == "-"){
-        fr_lastPos.x -= 5;
+        fr_lastPos.x -= 10;
     }
     if(obj.y == '+'){
-        fr_lastPos.y += 5;
+        fr_lastPos.y += 10;
     }else if(obj.y == '-'){
-        fr_lastPos.y -= 5;
+        fr_lastPos.y -= 10;
     }
 
     borderPatrol();
@@ -105,4 +119,8 @@ function borderPatrol(){
 
     robot.moveMouse(fr_lastPos.x,fr_lastPos.y);
 
+}
+
+function time(){
+    return "["+new Date().toLocaleString()+"] ";
 }

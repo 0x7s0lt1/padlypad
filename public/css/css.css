@@ -3,6 +3,10 @@
     src: url(../webfonts/SFDistantGalaxy.ttf);
 }
 
+.btn:focus{
+    outline: none;
+}
+
 html{
     margin: 0px;
     padding: 0px;
@@ -43,7 +47,6 @@ h1{
     border: 1px solid white;
     color: white;
     font-size: 6vw;
-    color: white;
     background-color: rgb(33,33,33);
 }
 
@@ -58,8 +61,11 @@ h1{
 #scroll-pad{
     max-width: 14.2%;
     min-width: 14.2%;
+    max-height: 100vw;
     border-radius: 8px;
-    display: inline-block;
+    position: absolute;
+    top: 40vw;
+    right: 0px;
     background: linear-gradient(from top,white,transparent 50%,white);
     box-shadow: inset 0px 0px 10px white;
     margin: 0px;
@@ -80,10 +86,26 @@ h1{
     max-width: 85%;
     display: inline-block;
 }
-#inputs button{
+#inputs #send-input{
     font-size: 6vw;
     min-height: 5vw;
     max-width: 15%;
     min-width: 15%;
     float: right;
+}
+
+.spec_btn{
+
+    width: 20%;
+    margin: auto;
+    border: 1px solid white;
+    color: white;
+    font-size: 2vw;
+    background-color: rgb(33,33,33);
+
+}
+
+.spec_selected{
+
+    background-color: rgb(107, 107, 121);
 }
