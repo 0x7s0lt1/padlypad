@@ -1,15 +1,15 @@
 
 App = {
 
-    calc : 'freedom',
+    calc : 'linearPointerEvent',
     screenSize : {},
     touch_pad : document.getElementById('touch-pad'),
     scroll_pad : document.getElementById('scroll-pad'),
     input_holder : document.getElementById('inputs'),
     text_input: document.getElementById('text-input'),
     fr_LastPos : {x : 0,y :0},
-    scroll: {x:0,y:0},
     socket : {},
+    keyModifiers : [],
     
     init: function(){
         
@@ -17,14 +17,19 @@ App = {
         App.touch_pad.style.height = (window.innerHeight - 50) + 'px';
         App.scroll_pad.style.height = (window.innerHeight - 50) + 'px';
         App.touch_pad.addEventListener('touchmove',App.onTouchMove,false);
-        App.scroll_pad.addEventListener('touchmove',App.onScroll,false);
+        App.scroll_pad.addEventListener('touchend',App.onScroll,false);
         window.addEventListener('dblclick',App.onDblClick,false);
         window.addEventListener('contextmenu',App.onContextMenu,false);
         document.getElementById('keyboard_btn').addEventListener('click',App.openKeyboard);
         document.getElementById('send-input').addEventListener('click',App.sendText);
-
+        document.getElementById('pointer_btn').addEventListener('click',App.hideInput,false);
+        
         //App.text_input.addEventListener('blur',App.hideInput,false);
         App.text_input.addEventListener('keydown',App.specKeyHandler,false);
+
+        document.querySelectorAll('.spec').forEach(e=>{
+            e.addEventListener('click',App.modifierListener);
+        });
 
         App.socket.on('error',(err)=>{
             alert(JSON.stringify(err));
@@ -69,29 +74,16 @@ App = {
 
     },  
 
-    calcFreePos(){
-
-    },
-
-
+    
     onTouchMove: function(event){
 
         switch(App.calc){
             case 'percentage':
                 App.socket.emit( 'mouseAction_percent', App.makePercentage( event.touches[0].clientX,event.touches[0].clientY ) );
             break;
-            case 'freedom':
+            case 'linearPointerEvent':
                 App.socket.emit( 'mouseAction_freedom', App.detectSwipeDirection(event.touches[0].clientX,event.touches[0].clientY));
             break;
-            case 'joystick':
-                console.log('Mode:',"joystick");
-                //App.socket.emit( 'MouseAction',App.makePercentage( event.touches[0].clientX,event.touches[0].clientY ) );
-            break;
-            case 'gamepad':
-                console.log('Mode:',"gamepad");
-                //App.socket.emit( 'MouseAction',App.makePercentage( event.touches[0].clientX,event.touches[0].clientY ) );
-            break;
-
         }
 
     },
@@ -103,20 +95,24 @@ App = {
         App.socket.emit('click',true);
     },
     onScroll: function(event){
-        if(event.touches[0].clientY > window.innerHeight / 2){
-            App.scroll.y -= 5;
-            App.socket.emit('scroll',App.scroll);
+        
+        if(event.touches[0].clientY > window.innerHeight / 2){  
+            App.tapKey('pageup')
         }else{
-            App.scroll.y += 5;
-            App.socket.emit('scroll',App.scroll);
+            App.tapKey('pagedown');
         }
+        
     },
     openKeyboard: function(){
         App.input_holder.style.display = 'inline';
         App.text_input.focus();
         App.text_input.click();
     },
-    hideInput : function(){
+    hideInput : function(clear){
+        if(clear){
+            App.text_input.value = "";
+            App.text_input.blur();
+        }
         App.input_holder.style.display = 'none';
     },
     tapKey : function(key){
@@ -124,10 +120,15 @@ App = {
     },
     sendText: function(){
         
+        if(App.keyModifiers.length > 0 && App.text_input.value.length === 1){
+            App.socket.emit('tapKeyCombo',{
+                key : App.text_input.value,
+                array : App.keyModifiers
+            });
+            return;
+        }
         App.socket.emit('sendText',App.text_input.value);
-        App.text_input.value = "";
-        App.text_input.blur();
-        App.input_holder.style.display = 'none';
+        App.hideInput(true);
        
     },
     specKeyHandler : function(ev){
@@ -139,14 +140,31 @@ App = {
             App.tapKey('enter');
         }
     },
+    removeModifier : function(key){
+
+        App.keyModifiers = App.keyModifiers.filter(e=>{
+            return e != key;
+        });
+    },
+    addMofier : function(key){
+        if(App.addMofier[key] == undefined){
+            App.keyModifiers.push(key);
+        }
+    },
+    modifierListener : function(event){
+
+        if(App.keyModifiers.includes(event.target.dataset.key) ){
+            App.removeModifier(event.target.dataset.key);
+            event.target.classList.remove('spec_selected');
+        }else{
+            App.addMofier(event.target.dataset.key);
+            event.target.classList.add('spec_selected');
+        }
+        
+    },
 
 
 
 }
 
-window.addEventListener('load',function(){
-    
-    App.init(); 
-
-})
-
+window.addEventListener('DOMContentLoaded',App.init,false);
