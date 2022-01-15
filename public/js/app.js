@@ -17,7 +17,8 @@ App = {
         App.touch_pad.style.height = (window.innerHeight - 50) + 'px';
         App.scroll_pad.style.height = (window.innerHeight - 50) + 'px';
         App.touch_pad.addEventListener('touchmove',App.onTouchMove,false);
-        App.scroll_pad.addEventListener('touchend',App.onScroll,false);
+        //App.scroll_pad.addEventListener('touchend',App.onScroll,false);
+        App.scroll_pad.addEventListener('scroll',App.onScroll,false)
         window.addEventListener('dblclick',App.onDblClick,false);
         window.addEventListener('contextmenu',App.onContextMenu,false);
         document.getElementById('keyboard_btn').addEventListener('click',App.openKeyboard);
@@ -34,7 +35,12 @@ App = {
         App.socket.on('error',(err)=>{
             alert(JSON.stringify(err));
         });
-
+        App.socket.on('connect', function () {
+            document.querySelector('.connection_error').style.display = 'none';
+         });
+        App.socket.on('disconnect', function () {
+            document.querySelector('.connection_error').style.display = 'block';
+         });
         App.socket.on('initScreen',(screenSize)=>{
             App.screenSize = screenSize;
         });
@@ -74,7 +80,25 @@ App = {
 
     },  
 
-    
+    requestFullScreen : function(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        var docelem = document.documentElement;
+            if (docelem.requestFullscreen) {
+                docelem.requestFullscreen();
+            }
+            else if (docelem.msRequestFullscreen) {
+                docelem.msRequestFullscreen();
+            }
+            else if (docelem.mozRequestFullScreen) {
+                docelem.mozRequestFullScreen();
+            }
+            else if (docelem.webkitRequestFullScreen) {
+                docelem.webkitRequestFullScreen();
+            }
+
+    },
     onTouchMove: function(event){
 
         switch(App.calc){
@@ -96,11 +120,31 @@ App = {
     },
     onScroll: function(event){
         
+        //console.log(event);
+        //console.log('innerHeight:',event.target.offsetHeight);
+        //console.log('ScrollHeight:',event.target.scrollHeight);
+        //console.log('ScrollTop:',event.target.scrollTop);
+        //console.log('ClientHeight:',event.target.clientHeight);
+        //console.log('Calc:',event.target.scrollHeight - event.target.scrollTop);
+
+    
+        if(event.target.scrollTop <= 50){
+
+            App.scroll_pad.insertBefore(App.scroll_pad.lastElementChild,App.scroll_pad.firstElementChild);
+           
+        }if(event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 100){
+
+            App.scroll_pad.appendChild(App.scroll_pad.firstElementChild);
+
+        }
+
+        /*
         if(event.touches[0].clientY > window.innerHeight / 2){  
             App.tapKey('pageup')
         }else{
             App.tapKey('pagedown');
         }
+        */
         
     },
     openKeyboard: function(){
