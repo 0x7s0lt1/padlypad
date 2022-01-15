@@ -5,9 +5,5 @@
 <p>Remote Mouse and Keyboard from mobile browser!</p>
 
 <code>
-  npm i -g https://github.com/zsoltfehervari/padlypad
-</code>
-<br>
-<code>
   Start command: padlypad
 </code>
