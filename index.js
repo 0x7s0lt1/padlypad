@@ -67,20 +67,25 @@ UPserver.on('connection',(socket)=>{
     });
     socket.on('tapKeyCombo',(data) =>{
         robot.keyTap(data.key,data.array);
+    });
+    socket.on('motionChange',(data)=>{
+        //console.log('[Beta:]',data.beta);
+        //console.log('[Gamma:]',data.gamma);
+        console.log('[Alpha:]',data.alpha);
     })
+      
+
+
+
+
+
+
     socket.on('error',(err)=>{
         console.log(time()+chalk.red(err));
-    })   
-
-
-
-
-
-
-
+    }); 
     socket.on('disconnect',()=>{
         console.log(time()+chalk.bgYellow(chalk.black('Disconnection: ',socket.request.connection.remoteAddress)));
-    })
+    });
 
 
 });

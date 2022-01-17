@@ -13,9 +13,29 @@
         <title>PadyPad</title>
     </head>
     <body>
+        <p class="connection_error">Connection lost!</p>
         <h1>
-            PadlyPad
+            PadlyPad 
+            <i id='menu_btn' onclick="App.openMenu()" class="header_btn fas fa-sliders-h"></i>
+            <i onclick="App.requestFullScreen(event)" class="header_btn fas fa-expand"></i>
         </h1>
+        <div class="menu">
+
+            <article>
+                <h4>Mouse Type:</h4>
+                <hr>
+                <div class="container" style="text-align: center;">
+                    <i data-calc="percentage"  class="calcType btn fas fa-percentage"><br>Percent</i>
+                    <i data-calc="linearPointerEvent" class="calcType btn fas fa-map-pin"><br>Linear</i>
+                    <i data-calc="magic" class="calcType btn fas fa-magic"><br>Magic</i>
+                </div>
+                <hr>
+                <div id="type_description">
+
+                </div>
+            </article>
+
+        </div>
         <div class="container">
             <div class="btn-group w-100">
                 <span id="keyboard_btn" class="btn icon fas fa-keyboard"></span>
@@ -24,7 +44,18 @@
         </div>
 
     <div id="touch-pad"></div>  
-    <div id="scroll-pad"></div>
+    <div id="scroll-pad">
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+        <span class="wheel"></span>
+    </div>
 
     <div id="inputs" class="input-group">
         <div class="input-group" style="min-width: 100%;">

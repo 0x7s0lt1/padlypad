@@ -1,8 +1,11 @@
 
 App = {
 
-    calc : 'linearPointerEvent',
+    calcType : 'linearPointerEvent',
     screenSize : {},
+    menu_is_open : false,
+    menu : document.querySelector('.menu'),
+    menu_btn :document.getElementById('menu_btn'),
     touch_pad : document.getElementById('touch-pad'),
     scroll_pad : document.getElementById('scroll-pad'),
     input_holder : document.getElementById('inputs'),
@@ -10,6 +13,13 @@ App = {
     fr_LastPos : {x : 0,y :0},
     socket : {},
     keyModifiers : [],
+    type_desciption : {
+        percentage : `Your phon escreen gon equale with the computer screen.
+        So if you touches your mobile top-rigt,the computer cursor whil be shown at the same epercentage on the screen!`,
+        joystick : `This works like a one stick joystick!`,
+        linearPointerEvent : `This works like a regular touchpad like on laptops!`,
+        magic : `Magik mouse works with device orientation.Like a laser pointer or a Magic ward.`,
+    },
     
     init: function(){
         
@@ -17,7 +27,8 @@ App = {
         App.touch_pad.style.height = (window.innerHeight - 50) + 'px';
         App.scroll_pad.style.height = (window.innerHeight - 50) + 'px';
         App.touch_pad.addEventListener('touchmove',App.onTouchMove,false);
-        App.scroll_pad.addEventListener('touchend',App.onScroll,false);
+        //App.scroll_pad.addEventListener('touchend',App.onScroll,false);
+        App.scroll_pad.addEventListener('scroll',App.onScroll,false)
         window.addEventListener('dblclick',App.onDblClick,false);
         window.addEventListener('contextmenu',App.onContextMenu,false);
         document.getElementById('keyboard_btn').addEventListener('click',App.openKeyboard);
@@ -31,10 +42,25 @@ App = {
             e.addEventListener('click',App.modifierListener);
         });
 
+        document.querySelectorAll('.calcType').forEach(e=>{
+            if(e.dataset.calc == App.calcType){
+                e.classList.add('selected');
+            }
+            e.addEventListener('click',App.changeCalcType);
+        });
+
+        window.addEventListener('deviceorientation',App.orientationChange);
+        window.addEventListener('MozOrientation',App.orientationChange);
+
         App.socket.on('error',(err)=>{
             alert(JSON.stringify(err));
         });
-
+        App.socket.on('connect', function () {
+            document.querySelector('.connection_error').style.display = 'none';
+         });
+        App.socket.on('disconnect', function () {
+            document.querySelector('.connection_error').style.display = 'block';
+         });
         App.socket.on('initScreen',(screenSize)=>{
             App.screenSize = screenSize;
         });
@@ -73,16 +99,57 @@ App = {
         return dir;
 
     },  
+    openMenu : function(){
+        switch(App.menu_is_open){
+            case false:
+                App.menu.style.left = '0px';
+                App.menu_is_open = true;
+                break;
+            case true:
+                App.menu.style.left = '-1000px';
+                App.menu_is_open = false;
+                break;    
+        }
 
-    
+    },
+    requestFullScreen : function(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        var docelem = document.documentElement;
+            if (docelem.requestFullscreen) {
+                docelem.requestFullscreen();
+            }
+            else if (docelem.msRequestFullscreen) {
+                docelem.msRequestFullscreen();
+            }
+            else if (docelem.mozRequestFullScreen) {
+                docelem.mozRequestFullScreen();
+            }
+            else if (docelem.webkitRequestFullScreen) {
+                docelem.webkitRequestFullScreen();
+            }
+
+    },
+    changeCalcType : function(event){
+        document.querySelectorAll('.calcType').forEach(e=>{
+            e.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+        App.calcType = event.target.dataset.calc;
+        document.getElementById('type_description').innerHTML = App.type_desciption[event.target.dataset.calc];
+    },
     onTouchMove: function(event){
 
-        switch(App.calc){
+        switch(App.calcType){
             case 'percentage':
                 App.socket.emit( 'mouseAction_percent', App.makePercentage( event.touches[0].clientX,event.touches[0].clientY ) );
             break;
             case 'linearPointerEvent':
                 App.socket.emit( 'mouseAction_freedom', App.detectSwipeDirection(event.touches[0].clientX,event.touches[0].clientY));
+            break;
+            case 'magic':
+                //App.socket.emit( 'mouseAction_freedom', App.detectSwipeDirection(event.touches[0].clientX,event.touches[0].clientY));
             break;
         }
 
@@ -96,11 +163,31 @@ App = {
     },
     onScroll: function(event){
         
+        //console.log(event);
+        //console.log('innerHeight:',event.target.offsetHeight);
+        //console.log('ScrollHeight:',event.target.scrollHeight);
+        //console.log('ScrollTop:',event.target.scrollTop);
+        //console.log('ClientHeight:',event.target.clientHeight);
+        //console.log('Calc:',event.target.scrollHeight - event.target.scrollTop);
+
+    
+        if(event.target.scrollTop <= 50){
+
+            App.scroll_pad.insertBefore(App.scroll_pad.lastElementChild,App.scroll_pad.firstElementChild);
+           
+        }if(event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight + 100){
+
+            App.scroll_pad.appendChild(App.scroll_pad.firstElementChild);
+
+        }
+
+        /*
         if(event.touches[0].clientY > window.innerHeight / 2){  
             App.tapKey('pageup')
         }else{
             App.tapKey('pagedown');
         }
+        */
         
     },
     openKeyboard: function(){
@@ -161,6 +248,17 @@ App = {
             event.target.classList.add('spec_selected');
         }
         
+    },
+    orientationChange : function(event){
+
+        if(App.calcType == 'magic'){
+            App.socket.emit('motionChange',{
+                alpha : event.alpha, //left right  360
+                beta : event.beta, //up+ down  -
+            });
+        }
+            
+
     },
 
 
