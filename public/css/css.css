@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @font-face {
     font-family: h1;
     src: url(../webfonts/SFDistantGalaxy.ttf);
@@ -167,4 +168,137 @@ h1{
     top: 0px;
     background-color: red;
     display: none;
+=======
+@font-face {
+    font-family: h1;
+    src: url(../webfonts/SFDistantGalaxy.ttf);
+}
+
+.btn:focus{
+    outline: none;
+}
+
+html{
+    margin: 0px;
+    padding: 0px;
+    min-height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-shadow: inset 0px 0px 30px white;
+    transition: all;
+    transition-duration: 500ms;
+    background-image: radial-gradient(circle at center center, transparent 0%,rgb(33,33,33) 99%),repeating-linear-gradient(0deg, rgba(163, 163, 163,0.2) 0px, rgba(163, 163, 163,0.2) 1px,transparent 1px, transparent 6px),repeating-linear-gradient(90deg, rgba(163, 163, 163,0.2) 0px, rgba(163, 163, 163,0.2) 1px,transparent 1px, transparent 6px),linear-gradient(90deg, rgb(33,33,33),rgb(33,33,33));
+
+}
+body{
+    min-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    background-color: transparent;
+
+}
+html:active{
+    box-shadow: inset 0px 0px 70px rgb(180, 179, 179);
+}
+h1{
+    font-family: h1;
+    padding-left: 3vw;
+    padding-top: 1vw;
+    margin: 0px;
+    color: white;
+}
+.container{
+    min-width: 100%;
+    background-color: transparent;
+    margin-top: 0px;
+}
+.icon{
+    min-width: 50%;
+    border: 1px solid white;
+    color: white;
+    font-size: 6vw;
+    background-color: rgb(33,33,33);
+}
+
+#touch-pad{
+    max-width: 84.8%;
+    min-width: 84.8%;
+    display: inline-block;
+    touch-action: pan-y;
+    margin: 0px;
+    padding: 0px;
+}
+#scroll-pad{
+    max-width: 14.2%;
+    min-width: 14.2%;
+    max-height: 100vw;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 28px;
+    box-shadow: 0px 0px 10px black;
+    position: absolute;
+    top: 40vw;
+    right: 0px;
+    background-color: rgb(165, 164, 164);
+    box-shadow: inset 0px 0px 10px white;
+    overflow: auto;
+    
+}
+.wheel{
+    background-color: rgb(33,33,33);
+    border: 1px solid white;
+    float: right;
+    max-width: 20vw;
+    min-width: 20vw;
+    margin-top: 5px;
+    max-height: 20vw;
+    min-height: 20vw;
+}
+
+
+#inputs{
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    min-width: 100%;
+    display: none;
+}
+#inputs input{
+    font-size: 4vw;
+    min-width: 85%;
+    max-width: 85%;
+    display: inline-block;
+}
+#inputs #send-input{
+    font-size: 6vw;
+    min-height: 5vw;
+    max-width: 15%;
+    min-width: 15%;
+    float: right;
+}
+
+.spec_btn{
+
+    width: 20%;
+    margin: auto;
+    border: 1px solid white;
+    color: white;
+    font-size: 2vw;
+    background-color: rgb(33,33,33);
+
+}
+
+.spec_selected{
+    background-color: rgb(107, 107, 121);
+}
+.connection_error{
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    left: 0px;
+    top: 0px;
+    background-color: red;
+    display: none;
+>>>>>>> ae6a411553b253c5b5240c6e0d286e8a739c7a1a
 }
