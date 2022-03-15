@@ -1,3 +1,3 @@
 # 🖱️padlyPad📱
-<p>⚠️Require: node v17⚠️</p>
+<p>⚠️Require: node >= 17⚠️</p>
 
